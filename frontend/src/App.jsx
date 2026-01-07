@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import PostIndex from "./components/PostIndex";
+import EmployeePage from "./pages/EmployeePage";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<PostIndex />} />
+        <Route path="/" element={<EmployeePage />} />
       </Routes>
     </>
   );
