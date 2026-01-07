@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const educationList = [
     "B.Tech",
@@ -9,39 +9,68 @@ const educationList = [
     "Post Graduate",
 ];
 
+const emptyForm = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    dob: "",
+    gender: "",
+    education: "",
+    company: "",
+    experience: "",
+    package: "",
+};
+
 const EmployeeForm = ({ data, onClose, onSubmit }) => {
-    const [form, setForm] = useState({
-        firstName: data?.firstName || "",
-        lastName: data?.lastName || "",
-        email: data?.email || "",
-        dob: data?.dob || "",
-        gender: data?.gender || "",
-        education: data?.education || "",
-        company: data?.company || "",
-        experience: data?.experience || "",
-        package: data?.package || "",
-    });
+    const [form, setForm] = useState(emptyForm);
+
+    useEffect(() => {
+        if (data) {
+            setForm({
+                ...data,
+                dob: data.dob ? data.dob.slice(0, 10) : "",
+            });
+        } else {
+            setForm(emptyForm);
+        }
+    }, [data]);
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value, type } = e.target;
+        setForm({
+            ...form,
+            [name]: type === "number" ? Number(value) : value,
+        });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (
+            !form.firstName ||
+            !form.lastName ||
+            !form.email ||
+            !form.dob ||
+            !form.gender
+        ) {
+            alert("Please fill all required fields");
+            return;
+        }
+
         onSubmit(form);
     };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div className="w-full max-w-lg rounded-md bg-white shadow-2xl">
-                {/* Header */}
                 <div className="px-6 py-4">
-                    <h1 className="text-xl font-medium ">Employee Form</h1>
+                    <h1 className="text-xl font-semibold">
+                        {data ? "Update Employee" : "Add Employee"}
+                    </h1>
                 </div>
 
                 <form onSubmit={handleSubmit}>
                     <div className="px-6 space-y-2 pb-4">
-                        {/* First & Last Name */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="text-sm text-gray-600">First name</label>
@@ -170,12 +199,11 @@ const EmployeeForm = ({ data, onClose, onSubmit }) => {
                         </div>
                     </div>
 
-                    {/* Footer */}
                     <div className="flex justify-end gap-3 px-6 pb-4">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="rounded border bg-white px-6 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                            className="rounded border px-6 py-2 text-sm hover:bg-gray-100 cursor-pointer"
                         >
                             Cancel
                         </button>
