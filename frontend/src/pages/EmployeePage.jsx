@@ -26,7 +26,7 @@ const EmployeePage = () => {
 
 
     // FETCH
-    const { data: employees = [], isLoading } = useQuery({
+    const { data: employees = [] } = useQuery({
         queryKey: ["employees"],
         queryFn: getEmployees,
     });
@@ -104,9 +104,6 @@ const EmployeePage = () => {
         deleteMutation.mutate(id);
     };
 
-    if (isLoading) {
-        return <div className="p-6">Loading employees...</div>;
-    }
 
     return (
         <div className="min-h-screen bg-gray-100">
