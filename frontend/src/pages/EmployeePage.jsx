@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import { Eye, Pencil, Trash2, ChevronLeft, ChevronRight, ArrowDown, ArrowUp } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance } from "../lib/axios";
 
 import EmployeeForm from "../components/EmployeeForm";
 import EmployeeViewModal from "../components/EmployeeViewModal";
-import {
-    getEmployees,
-    addEmployee,
-    updateEmployee,
-    deleteEmployee,
-} from "../api/employee.api";
+
 
 const EmployeePage = () => {
     const queryClient = useQueryClient();
@@ -24,28 +20,43 @@ const EmployeePage = () => {
 
     const [sortOrder, setSortOrder] = useState("desc");
 
-
-    // FETCH
+    /* ================= FETCH ================= */
     const { data: employees = [] } = useQuery({
         queryKey: ["employees"],
-        queryFn: getEmployees,
+        queryFn: async () => {
+            const res = await axiosInstance.get("/api/employees");
+            return res.data;
+        },
     });
 
-
-    // MUTATIONS
+    /* ================= ADD ================= */
     const addMutation = useMutation({
-        mutationFn: addEmployee,
-        onSuccess: () => queryClient.invalidateQueries(["employees"]),
+        mutationFn: async (data) => {
+            await axiosInstance.post("/api/employees", data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["employees"] });
+        },
     });
 
+    /* ================= UPDATE ================= */
     const updateMutation = useMutation({
-        mutationFn: updateEmployee,
-        onSuccess: () => queryClient.invalidateQueries(["employees"]),
+        mutationFn: async ({ id, data }) => {
+            await axiosInstance.put(`/api/employees/${id}`, data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["employees"] });
+        },
     });
 
+    /* ================= DELETE ================= */
     const deleteMutation = useMutation({
-        mutationFn: deleteEmployee,
-        onSuccess: () => queryClient.invalidateQueries(["employees"]),
+        mutationFn: async (id) => {
+            await axiosInstance.delete(`/api/employees/${id}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["employees"] });
+        },
     });
 
     // SORT TOGGLE
@@ -207,21 +218,21 @@ const EmployeePage = () => {
                                                     setEditData(row);
                                                     setOpenForm(true);
                                                 }}
-                                                className="p-2 rounded-full bg-blue-100 hover:bg-blue-200"
+                                                className="p-2 rounded-full bg-blue-100 hover:bg-blue-200 cursor-pointer"
                                             >
                                                 <Pencil size={18} className="text-blue-700" />
                                             </button>
 
                                             <button
                                                 onClick={() => setViewData(row)}
-                                                className="p-2 rounded-full bg-green-100 hover:bg-green-200"
+                                                className="p-2 rounded-full bg-green-100 hover:bg-green-200 cursor-pointer"
                                             >
                                                 <Eye size={18} className="text-green-700" />
                                             </button>
 
                                             <button
                                                 onClick={() => handleDelete(row._id)}
-                                                className="p-2 rounded-full bg-red-100 hover:bg-red-200"
+                                                className="p-2 rounded-full bg-red-100 hover:bg-red-200 cursor-pointer"
                                             >
                                                 <Trash2 size={18} className="text-red-700" />
                                             </button>
