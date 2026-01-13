@@ -4,6 +4,26 @@ A full-stack **MERN CRUD application** built with **React, Node.js, Express, Mon
 
 ---
 
+## 📸 Screenshots
+
+### Home Page
+
+![Home Page](./frontend/public/home.png)
+
+### Add Employee Page
+
+![Add Employee Page](./frontend/public/add-employee.png)
+
+### Edit Page
+
+![Edit Page](./frontend/public/edit.png)
+
+### Review Page
+
+![Review Page](./frontend/public/review.png)
+
+---
+
 ## 🚀 Features
 
 - Create, Read, Update, Delete (CRUD) Employees
